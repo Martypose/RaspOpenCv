@@ -6,6 +6,10 @@ cliente_conectado = False
 http_session = requests.Session()
 http_session.verify = './combined_certificates.pem'  # La ruta al archivo de certificados combinado
 
+# Aumentar el tiempo de espera (timeout) para la conexión
+http_session.timeout = 30  # Ajusta este valor según sea necesario
+
+
 sio = socketio.Client(http_session=http_session)
 
 @sio.event
