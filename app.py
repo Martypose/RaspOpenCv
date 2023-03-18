@@ -1,4 +1,3 @@
- app.py
 from flask import Flask
 import threading
 import cv2 as cv
