@@ -3,14 +3,17 @@ import requests
 cliente_conectado = False
 
 # Crear una sesión de requests personalizada
+# http_session = requests.Session()
+# http_session.verify = './combined_certificates.pem'  # La ruta al archivo de certificados combinado
 http_session = requests.Session()
-http_session.verify = './combined_certificates.pem'  # La ruta al archivo de certificados combinado
+http_session.verify = False
+sio = socketio.Client(http_session=http_session)
 
 # Aumentar el tiempo de espera (timeout) para la conexión
 http_session.timeout = 30  # Ajusta este valor según sea necesario
 
 
-sio = socketio.Client(ssl_verify=False)
+sio = socketio.Client(ssl_verify=False, logger=True, engineio_logger=True)
 
 @sio.event
 def connect():
@@ -33,7 +36,7 @@ def enviar_evento(nombre_evento, datos):
     sio.emit(nombre_evento, datos)
 
 # Conectarse al servidor Socket.IO en el lado del servidor de Flask
-sio.connect('https://www.maderaexteriores.com', namespace='/api', ssl_verify=False)
+sio.connect('https://www.maderaexteriores.com/api/', namespaces=['/api'])
 
 # Enviar un evento al servidor Socket.IO en el lado del servidor de Flask
 enviar_evento('evento', {'mensaje': 'Hola desde Flask'})
