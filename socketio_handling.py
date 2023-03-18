@@ -33,7 +33,7 @@ def enviar_evento(nombre_evento, datos):
     sio.emit(nombre_evento, datos)
 
 # Conectarse al servidor Socket.IO en el lado del servidor de Flask
-sio.connect('https://www.maderaexteriores.com/api')
+sio.connect('https://www.maderaexteriores.com:3001')
 
 # Enviar un evento al servidor Socket.IO en el lado del servidor de Flask
 enviar_evento('evento', {'mensaje': 'Hola desde Flask'})
