@@ -21,4 +21,4 @@ def esta_conectado():  # Función para devolver el estado de cliente_conectado
     global cliente_conectado
     return cliente_conectado
 
-sio.connect('https://www.maderaexteriores.com/api')
+sio.connect('https://www.maderaexteriores.com/api/')
