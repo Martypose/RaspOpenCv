@@ -10,7 +10,7 @@ http_session.verify = './combined_certificates.pem'  # La ruta al archivo de cer
 http_session.timeout = 30  # Ajusta este valor según sea necesario
 
 
-sio = socketio.Client(http_session=http_session)
+sio = socketio.Client(ssl_verify=False)
 
 @sio.event
 def connect():
