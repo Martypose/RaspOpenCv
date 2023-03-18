@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import time
-from socketio_handling import handle_connect, handle_disconnect, esta_conectado  # Importa cliente_conectado
+from socketio_handling import esta_conectado  # Importa cliente_conectado
 
 
 # Función para detectar objetos en una imagen
