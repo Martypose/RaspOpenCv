@@ -10,7 +10,7 @@ app.config["SECRET_KEY"] = "secret!"
 
 def main():
     # Cargar la imagen desde un archivo
-    imagen = cv.imread("tabla.JPG")
+    imagen = cv.imread("tabla5.JPG")
 
     if imagen is None:
         print("Error al cargar la imagen.")
