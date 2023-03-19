@@ -13,7 +13,8 @@ sio = socketio.Client(http_session=http_session)
 http_session.timeout = 30  # Ajusta este valor según sea necesario
 
 
-sio = socketio.Client(http_session=http_session, ssl_verify=True, logger=True, engineio_logger=True, debug=True)
+sio = socketio.Client(ssl_verify=False, logger=True, engineio_logger=True)
+
 @sio.event
 def connect():
     global cliente_conectado
