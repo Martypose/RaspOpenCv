@@ -4,10 +4,35 @@ import time
 from socketio_handling import esta_conectado  # Importa cliente_conectado
 
 
-# Función para detectar objetos en una imagen
-def detectar_objetos(imagen):
+def resize_min(imagen, imagen_fondo):
+    h1, w1 = imagen.shape[:2]
+    h2, w2 = imagen_fondo.shape[:2]
+
+    # Encuentra el mínimo ancho y alto
+    min_ancho = min(w1, w2)
+    min_alto = min(h1, h2)
+
+    # Redimensiona ambas imágenes al tamaño mínimo
+    imagen_resized = cv.resize(imagen, (min_ancho, min_alto))
+    imagen_fondo_resized = cv.resize(imagen_fondo, (min_ancho, min_alto))
+
+    return imagen_resized, imagen_fondo_resized
+
+def detectar_objetos(imagen, imagen_fondo):
+    # Redimensionar ambas imágenes al tamaño mínimo
+    imagen, imagen_fondo = resize_min(imagen, imagen_fondo)
+    
     # Convertir la imagen de BGR a HSV
     hsv = cv.cvtColor(imagen, cv.COLOR_BGR2HSV)
+    
+    # Convertir la imagen_fondo de BGR a HSV
+    hsv_fondo = cv.cvtColor(imagen_fondo, cv.COLOR_BGR2HSV)
+
+    # Restar la imagen_fondo de la imagen
+    # hsv = cv.subtract(hsv, hsv_fondo)
+
+    cv.imwrite("fondorestado.png",hsv)
+
     # Tomar el canal de saturación
     sat = hsv[:,:,2]
     grises = sat
@@ -15,11 +40,10 @@ def detectar_objetos(imagen):
     # Aplicar un desenfoque gaussiano
     grises = cv.GaussianBlur(grises, (3,3), 0)
     
-    # cv.imshow("Grises", grises)
-
     # Binarizar la imagen con un umbral
     binarizacion_global = cv.threshold(grises, 200, 255, cv.THRESH_BINARY)[1]
 
+    cv.imwrite("binarizada.png",binarizacion_global)
     # Dilatar y erosionar la imagen para eliminar ruido
     kernel = np.ones((3,3), np.uint8)
     dilate = cv.dilate(binarizacion_global, kernel, iterations=1)
@@ -31,8 +55,6 @@ def detectar_objetos(imagen):
     # Aplicar una apertura morfológica para eliminar pequeños objetos
     kernel = cv.getStructuringElement(cv.MORPH_RECT, (13, 13))
     opening = cv.morphologyEx(erode, cv.MORPH_OPEN, kernel, iterations=4)
-    
-    # cv.imshow("OpeningFinal", opening)
 
     # Encontrar contornos en la imagen
     cnts, _ = cv.findContours(opening, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -122,7 +144,7 @@ def procesar_video(captura, socketio):
             break
 
 
-def procesar_imagen(imagen, socketio):
+def procesar_imagen(imagen,fondo, socketio):
     # ancho de la imagen
     ancho = imagen.shape[1]
     # alto de la imagen
@@ -131,7 +153,7 @@ def procesar_imagen(imagen, socketio):
     print("ancho: ", ancho)
     print("alto: ", alto)
     while True:
-        contornos = detectar_objetos(imagen)
+        contornos = detectar_objetos(imagen,fondo)
         guardar_medidas(contornos, socketio, imagen)
         time.sleep(1)  # Espera 3 segundos antes de procesar la imagen nuevamente
     

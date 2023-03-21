@@ -7,10 +7,10 @@ from socketio_handling import sio, connect, disconnect, esta_conectado
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
-
+fondo = cv.imread("fondo.JPG")
 def main():
     # Cargar la imagen desde un archivo
-    imagen = cv.imread("tabla5.png")
+    imagen = cv.imread("tabla.JPG")
 
     if imagen is None:
         print("Error al cargar la imagen.")
@@ -18,7 +18,7 @@ def main():
     
     try:
         # Procesa la imagen (en lugar de capturar y procesar video)
-        imagen_thread = threading.Thread(target=procesar_imagen, args=(imagen, sio))  # Cambio de socketio a sio
+        imagen_thread = threading.Thread(target=procesar_imagen, args=(imagen,fondo, sio))  # Cambio de socketio a sio
         imagen_thread.start()
         # Inicia el hilo de envío de estadísticas
         stats_thread = threading.Thread(target=enviar_estadisticas, args=(sio,))
