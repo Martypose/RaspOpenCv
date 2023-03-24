@@ -3,6 +3,7 @@ import threading
 import cv2 as cv
 from resource_monitoring import enviar_estadisticas
 from socketio_handling import sio, connect, disconnect, esta_conectado
+from video_processing import procesar_video, procesar_imagen
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
