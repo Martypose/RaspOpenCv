@@ -20,7 +20,7 @@ def main():
         video_thread = threading.Thread(target=procesar_video, args=(captura, sio))  # Cambio de socketio a sio
         video_thread.start()
         # Inicia el hilo de envío de estadísticas
-        stats_thread = threading.Thread(target=enviar_estadisticas, args=(sio))
+        stats_thread = threading.Thread(target=enviar_estadisticas, args=(sio,))
         stats_thread.start()
 
         # Ejecuta la aplicación Flask en el hilo principal
