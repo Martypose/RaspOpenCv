@@ -111,7 +111,9 @@ def procesar_video(captura, socketio):
     umbral_movimiento = 248022  # Ajusta este valor para cambiar la sensibilidad
 
     while True:
-        frame = captura.capture_array()
+        ret, frame = captura.read()
+        if not ret:
+            break
         
             # Redimensionar el frame
         frame = cv.resize(frame, (nuevo_ancho, nuevo_alto))

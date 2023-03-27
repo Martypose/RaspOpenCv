@@ -9,29 +9,29 @@ def resize_min(imagen, imagen_fondo):
     h2, w2 = imagen_fondo.shape[:2]
 
     # Encuentra el mínimo ancho y alto
-    min_ancho = min(w1, w2)
-    min_alto = min(h1, h2)
+    #min_ancho = min(w1, w2)
+    #min_alto = min(h1, h2)
 
     # Redimensiona ambas imágenes al tamaño mínimo
-    imagen_resized = cv.resize(imagen, (min_ancho, min_alto))
-    imagen_fondo_resized = cv.resize(imagen_fondo, (min_ancho, min_alto))
+    #imagen_resized = cv.resize(imagen, (min_ancho, min_alto))
+    #imagen_fondo_resized = cv.resize(imagen_fondo, (min_ancho, min_alto))
 
     return imagen_resized, imagen_fondo_resized
 
-def detectar_objetos(imagen, imagen_fondo):
+def detectar_objetos(imagen):
     # Redimensionar ambas imágenes al tamaño mínimo
-    imagen, imagen_fondo = resize_min(imagen, imagen_fondo)
+    #imagen, imagen_fondo = resize_min(imagen, imagen_fondo)
     
     # Convertir la imagen de BGR a HSV
     hsv = cv.cvtColor(imagen, cv.COLOR_BGR2HSV)
     
     # Convertir la imagen_fondo de BGR a HSV
-    hsv_fondo = cv.cvtColor(imagen_fondo, cv.COLOR_BGR2HSV)
+    #hsv_fondo = cv.cvtColor(imagen_fondo, cv.COLOR_BGR2HSV)
 
     # Restar la imagen_fondo de la imagen
     # hsv = cv.subtract(hsv, hsv_fondo)
 
-    cv.imwrite("fondorestado.png",hsv)
+    #cv.imwrite("fondorestado.png",hsv)
 
     # Tomar el canal de saturación
     sat = hsv[:,:,2]
@@ -111,30 +111,17 @@ def procesar_video(captura, socketio):
     umbral_movimiento = 248022  # Ajusta este valor para cambiar la sensibilidad
 
     while True:
-        ret, frame = captura.read()
-        if not ret:
-            break
-        
+        frame = captura.capture_array()
+	# Guarda la imagen capturada en un archivo
+        cv.imwrite("captura.png", frame)
+	        
             # Redimensionar el frame
-        frame = cv.resize(frame, (nuevo_ancho, nuevo_alto))
-
-        # Si hay un frame anterior, calcular la diferencia y el movimiento
-        if frame_anterior is not None:
-            diferencia = cv.absdiff(frame, frame_anterior)
-            movimiento = cv.countNonZero(cv.cvtColor(diferencia, cv.COLOR_BGR2GRAY))
-
-            # Si el movimiento supera el umbral, marcar para procesar después de la espera
-            if movimiento > umbral_movimiento:
-                print(movimiento)
-                tiempo_ultimo_cambio = time.time()
-                procesar_siguiente_frame = True
-            # Si se ha cumplido el tiempo de espera y está marcado
-            elif procesar_siguiente_frame and time.time() - tiempo_ultimo_cambio >= tiempo_espera:
-                contornos = detectar_objetos(frame)
-                guardar_medidas(contornos, socketio)
-                procesar_siguiente_frame = False
+        #frame = cv.resize(frame, (nuevo_ancho, nuevo_alto))
+        contornos = detectar_objetos(frame)
+        guardar_medidas(contornos, socketio,frame)
+ #       procesar_siguiente_frame = False
         # Guardar el frame actual como frame anterior para la siguiente iteración
-        frame_anterior = frame.copy()
+#        frame_anterior = frame.copy()
 
         # Mostrar el frame en una ventana
         # cv.imshow("Resultado", frame)
