@@ -1,25 +1,25 @@
 from flask import Flask
 import threading
 import cv2 as cv
-from video_processing import procesar_video, procesar_imagen
+from picamera2 import Picamera2
 from resource_monitoring import enviar_estadisticas
 from socketio_handling import sio, connect, disconnect, esta_conectado
+from video_processing import procesar_video, procesar_imagen
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "secret!"
-fondo = cv.imread("fondo.JPG")
-def main():
-    # Cargar la imagen desde un archivo
-    imagen = cv.imread("tabla.JPG")
 
-    if imagen is None:
-        print("Error al cargar la imagen.")
+def main():
+    captura = cv.VideoCapture(0)
+
+    if not captura.isOpened():
+        print("Error al abrir la cámara.")
         return
-    
+
     try:
-        # Procesa la imagen (en lugar de capturar y procesar video)
-        imagen_thread = threading.Thread(target=procesar_imagen, args=(imagen,fondo, sio))  # Cambio de socketio a sio
-        imagen_thread.start()
+        # Procesa el video (en lugar de capturar y procesar una imagen)
+        video_thread = threading.Thread(target=procesar_video, args=(captura, sio))  # Cambio de socketio a sio
+        video_thread.start()
         # Inicia el hilo de envío de estadísticas
         stats_thread = threading.Thread(target=enviar_estadisticas, args=(sio,))
         stats_thread.start()
@@ -28,7 +28,7 @@ def main():
         app.run(host="0.0.0.0", port=5000)
 
     finally:
-        pass
+        captura.release()
 
 if __name__ == "__main__":
     main()
