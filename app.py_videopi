@@ -1,0 +1,31 @@
+from flask import Flask
+import threading
+from picamera2 import Picamera2
+from resource_monitoring import enviar_estadisticas
+from socketio_handling import sio, connect, disconnect, esta_conectado
+from video_processing import procesar_video, procesar_imagen
+
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "secret!"
+
+def main():
+    picam2 = Picamera2()
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
+    picam2.start()
+
+    try:
+        # Procesa el video (en lugar de capturar y procesar una imagen)
+        video_thread = threading.Thread(target=procesar_video, args=(picam2, sio))  # Cambio de socketio a sio
+        video_thread.start()
+        # Inicia el hilo de envío de estadísticas
+        stats_thread = threading.Thread(target=enviar_estadisticas, args=(sio,))
+        stats_thread.start()
+
+        # Ejecuta la aplicación Flask en el hilo principal
+        app.run(host="0.0.0.0", port=5000)
+
+    finally:
+        picam2.stop()
+
+if __name__ == "__main__":
+    main()
