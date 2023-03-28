@@ -17,8 +17,7 @@ def main():
     # Configura la posición de la lente para enfocar a 30 cm
     lens_position = 1 / 0.3  # 1 / (distancia en metros)
     picam2.set_controls({"LensPosition": lens_position})
-    config=picam2.create_video_configuration(raw={}, encode="raw")
-    picam2.configure(config)
+    picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (2000, 1125)}))
     picam2.start()
 
     try:
