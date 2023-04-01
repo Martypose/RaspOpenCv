@@ -4,7 +4,7 @@ Este proyecto utiliza Python Flask, OpenCV y Socket.IO para crear una aplicació
 
 ## Características
 
-- Captura de imágenes en tiempo real desde una cámara convencional
+- Captura de imágenes en tiempo real desde una cámara Raspberry Camera Module 3
 - Procesamiento de imágenes utilizando OpenCV para detectar tablas en el aserradero
 - Cálculo de medidas de las tablas detectadas
 - Envío de medidas y estadísticas de recursos del sistema a través de Socket.IO
